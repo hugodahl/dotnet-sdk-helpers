@@ -15,9 +15,13 @@ Versions:
   An installed version number of a .NET Core SDK"
 }
 
+function sdk_versions(){
+	ls -1 "/usr/local/share/dotnet/sdk"
+}
+
 function sdk_list(){
 	echo "The installed .NET Core SDKs are:"
-	ls -1 "/usr/local/share/dotnet/sdk"
+	sdk_versions
 }
 
 function sdk_latest(){
@@ -43,11 +47,16 @@ case "$1" in
 		sdk_latest
 		;;
 	*)
+		if [ -e "/usr/local/share/dotnet/sdk/"$1 ]; then
 		echo "Switching .NET Core SDK version to $1"
 		echo "{
-  \"sdk\": {
-    \"version\": \"$1\"
-  }
+	\"sdk\": {
+		\"version\": \"$1\"
+	}
 }" >> global.json
+		else
+			echo "The version specified, "$1", does not exist. The available versions are:"
+			sdk_versions
+		fi
 		;;
 esac
